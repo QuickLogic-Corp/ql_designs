@@ -54,7 +54,7 @@
 //
 
 //synopsys translate_off
-`include "timescale.v"
+//`include "timescale.v"
 //synopsys translate_on
 
 module dct_mac(clk, ena, dclr, din, coef, result);
