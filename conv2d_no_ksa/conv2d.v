@@ -288,11 +288,11 @@ module conv2d (
    reg 	      next_buffer, load_ext_acc, copy_acc;
    
 
-   adder # (.WIDTH(20)) t2_1 (.a(result_base),.b({11'b0,filters_loaded}),
+   myadder # (.WIDTH(20)) t2_1 (.a(result_base),.b({11'b0,filters_loaded}),
 			    .sum(i1_adder),.cout());
-   adder # (.WIDTH(20)) t2_2 (.a(i_tcdm2_waddr),.b(20'h4),
+   myadder # (.WIDTH(20)) t2_2 (.a(i_tcdm2_waddr),.b(20'h4),
 			    .sum(i2_adder),.cout());
-   adder # (.WIDTH(20)) t2_3 (.a(i_tcdm2_waddr),.b({7'b0,add_stride}),
+   myadder # (.WIDTH(20)) t2_3 (.a(i_tcdm2_waddr),.b({7'b0,add_stride}),
 			    .sum(i3_adder),.cout());
    
    
@@ -937,27 +937,27 @@ module conv2d (
    wire [15:0] k16acc0, k16acc1, k16acc2, k16acc3;
    wire [15:0] k16acc4, k16acc5, k16acc6, k16acc7;
    
-   adder # (.WIDTH(24)) k0 (.a(bias0),.b({16'b0,mac0_din}),.sum(k24acc0),.cout());
-   adder # (.WIDTH(24)) k1 (.a(bias1),.b({16'b0,mac1_din}),.sum(k24acc1),.cout());
-   adder # (.WIDTH(24)) k2 (.a(bias2),.b({16'b0,mac2_din}),.sum(k24acc2),.cout());
-   adder # (.WIDTH(24)) k3 (.a(bias3),.b({16'b0,mac3_din}),.sum(k24acc3),.cout());
-   adder # (.WIDTH(24)) k4 (.a(bias4),.b({16'b0,mac4_din}),.sum(k24acc4),.cout());
-   adder # (.WIDTH(24)) k5 (.a(bias5),.b({16'b0,mac5_din}),.sum(k24acc5),.cout());
-   adder # (.WIDTH(24)) k6 (.a(bias6),.b({16'b0,mac6_din}),.sum(k24acc6),.cout());
-   adder # (.WIDTH(24)) k7 (.a(bias7),.b({16'b0,mac7_din}),.sum(k24acc7),.cout());
+   myadder # (.WIDTH(24)) k0 (.a(bias0),.b({16'b0,mac0_din}),.sum(k24acc0),.cout());
+   myadder # (.WIDTH(24)) k1 (.a(bias1),.b({16'b0,mac1_din}),.sum(k24acc1),.cout());
+   myadder # (.WIDTH(24)) k2 (.a(bias2),.b({16'b0,mac2_din}),.sum(k24acc2),.cout());
+   myadder # (.WIDTH(24)) k3 (.a(bias3),.b({16'b0,mac3_din}),.sum(k24acc3),.cout());
+   myadder # (.WIDTH(24)) k4 (.a(bias4),.b({16'b0,mac4_din}),.sum(k24acc4),.cout());
+   myadder # (.WIDTH(24)) k5 (.a(bias5),.b({16'b0,mac5_din}),.sum(k24acc5),.cout());
+   myadder # (.WIDTH(24)) k6 (.a(bias6),.b({16'b0,mac6_din}),.sum(k24acc6),.cout());
+   myadder # (.WIDTH(24)) k7 (.a(bias7),.b({16'b0,mac7_din}),.sum(k24acc7),.cout());
    
-   adder # (.WIDTH(16)) k16_0 (.a(acc0[23:8]),.b({8'b0,mac0_din}),.sum(k16acc0),.cout());
-   adder # (.WIDTH(16)) k16_1 (.a(acc1[23:8]),.b({8'b0,mac1_din}),.sum(k16acc1),.cout());
-   adder # (.WIDTH(16)) k16_2 (.a(acc2[23:8]),.b({8'b0,mac2_din}),.sum(k16acc2),.cout());
-   adder # (.WIDTH(16)) k16_3 (.a(acc3[23:8]),.b({8'b0,mac3_din}),.sum(k16acc3),.cout());
-   adder # (.WIDTH(16)) k16_4 (.a(acc4[23:8]),.b({8'b0,mac4_din}),.sum(k16acc4),.cout());
-   adder # (.WIDTH(16)) k16_5 (.a(acc5[23:8]),.b({8'b0,mac5_din}),.sum(k16acc5),.cout());
-   adder # (.WIDTH(16)) k16_6 (.a(acc6[23:8]),.b({8'b0,mac6_din}),.sum(k16acc6),.cout());
-   adder # (.WIDTH(16)) k16_7 (.a(acc7[23:8]),.b({8'b0,mac7_din}),.sum(k16acc7),.cout());
+   myadder # (.WIDTH(16)) k16_0 (.a(acc0[23:8]),.b({8'b0,mac0_din}),.sum(k16acc0),.cout());
+   myadder # (.WIDTH(16)) k16_1 (.a(acc1[23:8]),.b({8'b0,mac1_din}),.sum(k16acc1),.cout());
+   myadder # (.WIDTH(16)) k16_2 (.a(acc2[23:8]),.b({8'b0,mac2_din}),.sum(k16acc2),.cout());
+   myadder # (.WIDTH(16)) k16_3 (.a(acc3[23:8]),.b({8'b0,mac3_din}),.sum(k16acc3),.cout());
+   myadder # (.WIDTH(16)) k16_4 (.a(acc4[23:8]),.b({8'b0,mac4_din}),.sum(k16acc4),.cout());
+   myadder # (.WIDTH(16)) k16_5 (.a(acc5[23:8]),.b({8'b0,mac5_din}),.sum(k16acc5),.cout());
+   myadder # (.WIDTH(16)) k16_6 (.a(acc6[23:8]),.b({8'b0,mac6_din}),.sum(k16acc6),.cout());
+   myadder # (.WIDTH(16)) k16_7 (.a(acc7[23:8]),.b({8'b0,mac7_din}),.sum(k16acc7),.cout());
 
    reg [11:0]  p1_raddr, p2_raddr;
    wire [11:0] p1_adder, p2_adder;
-   adder # (.WIDTH(12)) pk1 (.a(pixel_raddr),.b(12'h4),.sum(p1_adder),.cout());
+   myadder # (.WIDTH(12)) pk1 (.a(pixel_raddr),.b(12'h4),.sum(p1_adder),.cout());
    fadder # (.WIDTH(12)) pk2 (.a(pixel_raddr),.b({3'b111,~channels}),.sum(p2_adder),.cin(1'b1),.cout());
    always@(posedge clk or negedge rstn) begin
       if (rstn == 1'b0) begin // reset stuff
