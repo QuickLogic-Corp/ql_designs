@@ -18,7 +18,7 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module Simon_bit_serial_top(clk,data_in,data_rdy,cipher_out);
+module top(clk,data_in,data_rdy,cipher_out);
 
 input clk,data_in;
 input [1:0] data_rdy;
