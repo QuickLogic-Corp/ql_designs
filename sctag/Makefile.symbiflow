@@ -1,0 +1,149 @@
+.PHONY:${BUILDDIR}
+
+current_dir := /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/sctag
+TOP := sctag
+JSON := 
+TOP_FINAL := sctag
+VERILOG := ${current_dir}/bw_clk_cl_sctag_cmp.v \
+${current_dir}/bw_r_cm16x40b.v \
+${current_dir}/bw_r_cm16x40.v \
+${current_dir}/bw_r_dcd.v \
+${current_dir}/bw_r_dcm.v \
+${current_dir}/bw_r_efa.v \
+${current_dir}/bw_rf_16x65.v \
+${current_dir}/bw_rf_16x81.v \
+${current_dir}/bw_r_frf.v \
+${current_dir}/bw_r_icd.v \
+${current_dir}/bw_r_idct.v \
+${current_dir}/bw_r_irf_register.v \
+${current_dir}/bw_r_irf.v \
+${current_dir}/bw_r_l2d_32k.v \
+${current_dir}/bw_r_l2d_rep_bot.v \
+${current_dir}/bw_r_l2d_rep_top.v \
+${current_dir}/bw_r_l2d.v \
+${current_dir}/bw_r_l2t.v \
+${current_dir}/bw_r_rf16x128d.v \
+${current_dir}/bw_r_rf16x160.v \
+${current_dir}/bw_r_rf16x32.v \
+${current_dir}/bw_r_rf32x108.v \
+${current_dir}/bw_r_rf32x152b.v \
+${current_dir}/bw_r_rf32x80.v \
+${current_dir}/bw_r_scm.v \
+${current_dir}/bw_r_tlb.v \
+${current_dir}/cluster_header_ctu.v \
+${current_dir}/cluster_header_dup.v \
+${current_dir}/cluster_header_sync.v \
+${current_dir}/cluster_header.v \
+${current_dir}/cmp_sram_redhdr.v \
+${current_dir}/cpx_spc_buf.v \
+${current_dir}/cpx_spc_rpt.v \
+${current_dir}/dbl_buf.v \
+${current_dir}/m1behV.v \
+${current_dir}/sctag_arbaddrdp.v \
+${current_dir}/sctag_arbctl.v \
+${current_dir}/sctag_arbdatadp.v \
+${current_dir}/sctag_arbdecdp.v \
+${current_dir}/sctag_csr_ctl.v \
+${current_dir}/sctag_csr.v \
+${current_dir}/sctag_dbgdp.v \
+${current_dir}/sctag_decc_ctl.v \
+${current_dir}/sctag_deccdp.v \
+${current_dir}/sctag_dir_ctl.v \
+${current_dir}/sctag_dirg_buf.v \
+${current_dir}/sctag_dir_in.v \
+${current_dir}/sctag_dirl_buf.v \
+${current_dir}/sctag_dir_out.v \
+${current_dir}/sctag_dirrep.v \
+${current_dir}/sctag_dirvec_dp.v \
+${current_dir}/sctag_evicttag_dp.v \
+${current_dir}/sctag_fbctl.v \
+${current_dir}/sctag_iqctl.v \
+${current_dir}/sctag_iqdp.v \
+${current_dir}/sctag_mbctl.v \
+${current_dir}/sctag_mbist.v \
+${current_dir}/sctag_min_rptr.v \
+${current_dir}/sctag_oqctl.v \
+${current_dir}/sctag_oqdp.v \
+${current_dir}/sctag_rdmatctl.v \
+${current_dir}/sctag_retbuf.v \
+${current_dir}/sctag_retdp.v \
+${current_dir}/sctag_scbufrep.v \
+${current_dir}/sctag_sig_rptr.v \
+${current_dir}/sctag_slow_rptr.v \
+${current_dir}/sctag_snpctl.v \
+${current_dir}/sctag_snpdp.v \
+${current_dir}/sctag_stdatarep.v \
+${current_dir}/sctag_tagctlrep.v \
+${current_dir}/sctag_tagctl.v \
+${current_dir}/sctag_tagdp_ctl.v \
+${current_dir}/sctag_tagdp.v \
+${current_dir}/sctag_tagl_dp.v \
+${current_dir}/sctag_ua_dp.v \
+${current_dir}/sctag.v \
+${current_dir}/sctag_vd_dp.v \
+${current_dir}/sctag_vuadcol_dp.v \
+${current_dir}/sctag_vuad_ctl.v \
+${current_dir}/sctag_vuaddp_ctl.v \
+${current_dir}/sctag_vuad_dpm.v \
+${current_dir}/sctag_vuad_io.v \
+${current_dir}/sctag_wbctl.v \
+${current_dir}/swrvr_clib.v \
+${current_dir}/swrvr_dlib.v \
+${current_dir}/synchronizer_asr_dup.v \
+${current_dir}/synchronizer_asr.v \
+${current_dir}/sync_pulse_synchronizer.v \
+${current_dir}/test_stub_bist.v \
+${current_dir}/test_stub_scan.v \
+${current_dir}/u1behV.v \
+${current_dir}/ucb_bus_in.v \
+${current_dir}/ucb_bus_out.v \
+${current_dir}/ucb_flow_2buf.v \
+${current_dir}/ucb_flow_jbi.v \
+${current_dir}/ucb_flow_spi.v \
+${current_dir}/ucb_noflow.v  
+PARTNAME := 
+DEVICE  := qlf_k6n10_qlf_k6n10
+FAMILY := qlf_k6n10
+ANALYSIS_CORNER := slow
+PNR_CORNER := slow
+PCF := ${current_dir}/build/sctag_dummy.pcf
+PINMAP_CSV := ${current_dir}/build/sctag_dummy.csv
+SDC_IN := ${current_dir}/build/sctag_dummy.sdc
+BUILDDIR := build
+
+SDC := ${current_dir}/${BUILDDIR}/${TOP}.sdc
+
+all: ${BUILDDIR}/${TOP}.route
+
+${BUILDDIR}/${TOP}.eblif: ${VERILOG} ${PCF}
+  ifneq ("$(wildcard $(HEX_FILES))","")
+	$(shell cp ${current_dir}/*.hex ${BUILDDIR})
+  endif
+	cd ${BUILDDIR} && symbiflow_synth -t ${TOP} -v ${VERILOG} -F ${FAMILY} -d ${DEVICE} -p ${PCF}  > /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/sctag/build/sctag.log 2>&1
+
+${BUILDDIR}/${TOP}.sdc: ${BUILDDIR}/${TOP}.eblif
+	python3 /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/bin/python/process_sdc_constraints.py --sdc-in ${SDC_IN} --sdc-out $@ --pcf ${PCF} --eblif ${BUILDDIR}/${TOP}.eblif --pin-map ${PINMAP_CSV}
+${BUILDDIR}/${TOP}.net: ${BUILDDIR}/${TOP}.eblif ${BUILDDIR}/${TOP}.sdc
+	cd ${BUILDDIR} && symbiflow_pack -e ${TOP}.eblif -f ${FAMILY} -d ${DEVICE} -s ${SDC} -c ${PNR_CORNER} >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/sctag/build/sctag.log 2>&1
+
+${BUILDDIR}/${TOP}.place: ${BUILDDIR}/${TOP}.net ${PCF}
+	cd ${BUILDDIR} && symbiflow_place -e ${TOP}.eblif -f ${FAMILY} -d ${DEVICE} -p ${PCF} -n ${TOP}.net -P ${PARTNAME} -s ${SDC} -c ${PNR_CORNER} >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/sctag/build/sctag.log 2>&1
+
+${BUILDDIR}/${TOP_FINAL}.route: ${BUILDDIR}/${TOP_FINAL}.place
+	cd ${BUILDDIR} && symbiflow_route -e ${TOP_FINAL}.eblif -f ${FAMILY} -d ${DEVICE} -s ${SDC} -c ${PNR_CORNER} >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/sctag/build/sctag.log 2>&1
+
+${BUILDDIR}/${TOP}.post_v: ${BUILDDIR}/${TOP_FINAL}.route
+	cd ${BUILDDIR} && symbiflow_analysis -e ${TOP_FINAL}.eblif -f ${FAMILY} -d ${DEVICE} -s ${SDC} -c ${ANALYSIS_CORNER} -t ${TOP} >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/sctag/build/sctag.log 2>&1
+
+${BUILDDIR}/${TOP}.fasm: ${BUILDDIR}/${TOP_FINAL}.route
+	cd ${BUILDDIR} && symbiflow_write_fasm -e ${TOP_FINAL}.eblif -f ${FAMILY} -d ${DEVICE} -s ${SDC} -c ${PNR_CORNER} >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/sctag/build/sctag.log 2>&1
+
+${BUILDDIR}/${TOP}.bit: ${BUILDDIR}/${TOP}.fasm
+	cd ${BUILDDIR} && symbiflow_generate_bitstream -d ${FAMILY} -f ${TOP}.fasm -r 4byte -b ${TOP}.bit >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/sctag/build/sctag.log 2>&1
+	cd ${BUILDDIR} && symbiflow_generate_bitstream -d ${FAMILY} -f ${TOP}.fasm -r txt -b ${TOP}.bin >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/sctag/build/sctag.log 2>&1
+
+	cd ${BUILDDIR} && symbiflow_write_fasm2bels -e ${TOP}.eblif -d ${DEVICE} -p ${PCF} -n ${TOP}.net -P ${PARTNAME}
+    
+clean:
+	rm -rf ${BUILDDIR}
+

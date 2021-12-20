@@ -1,0 +1,117 @@
+.PHONY:${BUILDDIR}
+
+current_dir := /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/dart
+TOP := dart
+JSON := 
+TOP_FINAL := dart
+VERILOG := ${current_dir}/arbiter_static.v \
+${current_dir}/baud_gen.v \
+${current_dir}/check_dest.v \
+${current_dir}/const.v \
+${current_dir}/Control.v \
+${current_dir}/CreditCounter.v \
+${current_dir}/dartport.v \
+${current_dir}/dart.v \
+${current_dir}/decoder_N.v \
+${current_dir}/DistroRAM.v \
+${current_dir}/DualBRAM.v \
+${current_dir}/encoder_N.v \
+${current_dir}/fifo_8bit.v \
+${current_dir}/flit_out_inf.v \
+${current_dir}/FlitQueue_NC.v \
+${current_dir}/FlitQueue.v \
+${current_dir}/FQCtrlFSM.v \
+${current_dir}/FQCtrl.v \
+${current_dir}/FQCtrl_wrapper.v \
+${current_dir}/ICDestPart.v \
+${current_dir}/ICSourcePart.v \
+${current_dir}/InputVCState.v \
+${current_dir}/is_greater_than.v \
+${current_dir}/is_less_than.v \
+${current_dir}/LFSR3_9.v \
+${current_dir}/math.v \
+${current_dir}/max2.v \
+${current_dir}/mux_Nto1_decoded.v \
+${current_dir}/mux_Nto1.v \
+${current_dir}/mux_Nto1_wrapper.v \
+${current_dir}/myuart_fifotest.v \
+${current_dir}/myuart_rx.v \
+${current_dir}/myuart_tx.v \
+${current_dir}/Node.v \
+${current_dir}/one_hot_detect.v \
+${current_dir}/PackedFIFO.v \
+${current_dir}/PacketBuffer.v \
+${current_dir}/PacketPBControl.v \
+${current_dir}/PacketPlayer.v \
+${current_dir}/Partition.v \
+${current_dir}/RAMFIFO_ctrl_counter.v \
+${current_dir}/RAMFIFO_ctrl_lfsr_dc.v \
+${current_dir}/RAMFIFO_ctrl_lfsr.v \
+${current_dir}/RAMFIFO_single_slow.v \
+${current_dir}/RAMFIFO_slow.v \
+${current_dir}/RNG.v \
+${current_dir}/rotate_prio.v \
+${current_dir}/RouterInput.v \
+${current_dir}/RouterPortLookup.v \
+${current_dir}/Router.v \
+${current_dir}/RoutingTable_single.v \
+${current_dir}/RoutingTable.v \
+${current_dir}/rr_prio.v \
+${current_dir}/rt_update_flit.v \
+${current_dir}/select_early_3b.v \
+${current_dir}/select_early_N.v \
+${current_dir}/select_ready.v \
+${current_dir}/serde.v \
+${current_dir}/sim9_8x8.v \
+${current_dir}/srl_fifo.v \
+${current_dir}/TGBernoulliFSM.v \
+${current_dir}/TGPacketFSM.v \
+${current_dir}/TrafficGen.v \
+${current_dir}/util.v \
+${current_dir}/VCAlloc.v  
+PARTNAME := 
+DEVICE  := qlf_k6n10_qlf_k6n10
+FAMILY := qlf_k6n10
+ANALYSIS_CORNER := slow
+PNR_CORNER := slow
+PCF := ${current_dir}/build/dart_dummy.pcf
+PINMAP_CSV := ${current_dir}/build/dart_dummy.csv
+SDC_IN := ${current_dir}/build/dart_dummy.sdc
+BUILDDIR := build
+
+SDC := ${current_dir}/${BUILDDIR}/${TOP}.sdc
+
+all: ${BUILDDIR}/${TOP}.route
+
+${BUILDDIR}/${TOP}.eblif: ${VERILOG} ${PCF}
+  ifneq ("$(wildcard $(HEX_FILES))","")
+	$(shell cp ${current_dir}/*.hex ${BUILDDIR})
+  endif
+	cd ${BUILDDIR} && symbiflow_synth -t ${TOP} -v ${VERILOG} -F ${FAMILY} -d ${DEVICE} -p ${PCF}  > /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/dart/build/dart.log 2>&1
+
+${BUILDDIR}/${TOP}.sdc: ${BUILDDIR}/${TOP}.eblif
+	python3 /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/bin/python/process_sdc_constraints.py --sdc-in ${SDC_IN} --sdc-out $@ --pcf ${PCF} --eblif ${BUILDDIR}/${TOP}.eblif --pin-map ${PINMAP_CSV}
+${BUILDDIR}/${TOP}.net: ${BUILDDIR}/${TOP}.eblif ${BUILDDIR}/${TOP}.sdc
+	cd ${BUILDDIR} && symbiflow_pack -e ${TOP}.eblif -f ${FAMILY} -d ${DEVICE} -s ${SDC} -c ${PNR_CORNER} >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/dart/build/dart.log 2>&1
+
+${BUILDDIR}/${TOP}.place: ${BUILDDIR}/${TOP}.net ${PCF}
+	cd ${BUILDDIR} && symbiflow_place -e ${TOP}.eblif -f ${FAMILY} -d ${DEVICE} -p ${PCF} -n ${TOP}.net -P ${PARTNAME} -s ${SDC} -c ${PNR_CORNER} >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/dart/build/dart.log 2>&1
+
+${BUILDDIR}/${TOP_FINAL}.route: ${BUILDDIR}/${TOP_FINAL}.place
+	cd ${BUILDDIR} && symbiflow_route -e ${TOP_FINAL}.eblif -f ${FAMILY} -d ${DEVICE} -s ${SDC} -c ${PNR_CORNER} >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/dart/build/dart.log 2>&1
+
+${BUILDDIR}/${TOP}.post_v: ${BUILDDIR}/${TOP_FINAL}.route
+	cd ${BUILDDIR} && symbiflow_analysis -e ${TOP_FINAL}.eblif -f ${FAMILY} -d ${DEVICE} -s ${SDC} -c ${ANALYSIS_CORNER} -t ${TOP} >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/dart/build/dart.log 2>&1
+
+${BUILDDIR}/${TOP}.fasm: ${BUILDDIR}/${TOP_FINAL}.route
+	cd ${BUILDDIR} && symbiflow_write_fasm -e ${TOP_FINAL}.eblif -f ${FAMILY} -d ${DEVICE} -s ${SDC} -c ${PNR_CORNER} >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/dart/build/dart.log 2>&1
+
+${BUILDDIR}/${TOP}.bit: ${BUILDDIR}/${TOP}.fasm
+	cd ${BUILDDIR} && symbiflow_generate_bitstream -d ${FAMILY} -f ${TOP}.fasm -r 4byte -b ${TOP}.bit >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/dart/build/dart.log 2>&1
+	cd ${BUILDDIR} && symbiflow_generate_bitstream -d ${FAMILY} -f ${TOP}.fasm -r txt -b ${TOP}.bin >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/dart/build/dart.log 2>&1
+
+	cd ${BUILDDIR} && symbiflow_write_fasm2bels -e ${TOP}.eblif -d ${DEVICE} -p ${PCF} -n ${TOP}.net -P ${PARTNAME}
+    
+clean:
+	rm -rf ${BUILDDIR}
+

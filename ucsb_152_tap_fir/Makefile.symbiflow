@@ -1,0 +1,54 @@
+.PHONY:${BUILDDIR}
+
+current_dir := /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/ucsb_152_tap_fir
+TOP := ucsb_152_tap_fir
+JSON := 
+TOP_FINAL := ucsb_152_tap_fir.repacked
+VERILOG := ${current_dir}/ucsb_152_tap_fir.v  
+PARTNAME := 
+DEVICE  := qlf_k4n8_qlf_k4n8
+FAMILY := qlf_k4n8
+ANALYSIS_CORNER := slow
+PNR_CORNER := slow
+PCF := ${current_dir}/build/ucsb_152_tap_fir_dummy.pcf
+PINMAP_CSV := ${current_dir}/build/ucsb_152_tap_fir_dummy.csv
+SDC_IN := ${current_dir}/build/ucsb_152_tap_fir_dummy.sdc
+BUILDDIR := build
+
+SDC := ${current_dir}/${BUILDDIR}/${TOP}.sdc
+
+all: ${BUILDDIR}/${TOP}.bit
+
+${BUILDDIR}/${TOP}.eblif: ${VERILOG} ${PCF}
+  ifneq ("$(wildcard $(HEX_FILES))","")
+	$(shell cp ${current_dir}/*.hex ${BUILDDIR})
+  endif
+	cd ${BUILDDIR} && symbiflow_synth -t ${TOP} -v ${VERILOG} -F ${FAMILY} -d ${DEVICE} -p ${PCF}  > /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/ucsb_152_tap_fir/build/ucsb_152_tap_fir.log 2>&1
+
+${BUILDDIR}/${TOP}.sdc: ${BUILDDIR}/${TOP}.eblif
+	python3 /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/bin/python/process_sdc_constraints.py --sdc-in ${SDC_IN} --sdc-out $@ --pcf ${PCF} --eblif ${BUILDDIR}/${TOP}.eblif --pin-map ${PINMAP_CSV}
+${BUILDDIR}/${TOP}.net: ${BUILDDIR}/${TOP}.eblif ${BUILDDIR}/${TOP}.sdc
+	cd ${BUILDDIR} && symbiflow_pack -e ${TOP}.eblif -f ${FAMILY} -d ${DEVICE} -s ${SDC} -c ${PNR_CORNER} >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/ucsb_152_tap_fir/build/ucsb_152_tap_fir.log 2>&1
+
+${BUILDDIR}/${TOP}.place: ${BUILDDIR}/${TOP}.net ${PCF}
+	cd ${BUILDDIR} && symbiflow_place -e ${TOP}.eblif -f ${FAMILY} -d ${DEVICE} -p ${PCF} -n ${TOP}.net -P ${PARTNAME} -s ${SDC} -c ${PNR_CORNER} >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/ucsb_152_tap_fir/build/ucsb_152_tap_fir.log 2>&1
+
+${BUILDDIR}/${TOP_FINAL}.place: ${BUILDDIR}/${TOP}.eblif ${BUILDDIR}/${TOP}.net ${BUILDDIR}/${TOP}.place
+	cd ${BUILDDIR} && symbiflow_repack -e ${TOP}.eblif -n ${TOP}.net -f ${FAMILY} -d ${DEVICE} -c ${PNR_CORNER} >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/ucsb_152_tap_fir/build/ucsb_152_tap_fir.log 2>&1
+    
+${BUILDDIR}/${TOP_FINAL}.route: ${BUILDDIR}/${TOP_FINAL}.place
+	cd ${BUILDDIR} && symbiflow_route -e ${TOP_FINAL}.eblif -f ${FAMILY} -d ${DEVICE} -s ${SDC} -c ${PNR_CORNER} >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/ucsb_152_tap_fir/build/ucsb_152_tap_fir.log 2>&1
+
+${BUILDDIR}/${TOP}.post_v: ${BUILDDIR}/${TOP_FINAL}.route
+	cd ${BUILDDIR} && symbiflow_analysis -e ${TOP_FINAL}.eblif -f ${FAMILY} -d ${DEVICE} -s ${SDC} -c ${ANALYSIS_CORNER} -t ${TOP} >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/ucsb_152_tap_fir/build/ucsb_152_tap_fir.log 2>&1
+
+${BUILDDIR}/${TOP}.fasm: ${BUILDDIR}/${TOP_FINAL}.route
+	cd ${BUILDDIR} && symbiflow_write_fasm -e ${TOP_FINAL}.eblif -f ${FAMILY} -d ${DEVICE} -s ${SDC} -c ${PNR_CORNER} >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/ucsb_152_tap_fir/build/ucsb_152_tap_fir.log 2>&1
+
+${BUILDDIR}/${TOP}.bit: ${BUILDDIR}/${TOP}.fasm
+	cd ${BUILDDIR} && symbiflow_generate_bitstream -d ${FAMILY} -f ${TOP}.fasm -r 4byte -b ${TOP}.bit >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/ucsb_152_tap_fir/build/ucsb_152_tap_fir.log 2>&1
+	cd ${BUILDDIR} && symbiflow_generate_bitstream -d ${FAMILY} -f ${TOP}.fasm -r txt -b ${TOP}.bin >> /home/rakeshm/git_ql/symbiflow_install_intchain/quicklogic-arch-defs/share/symbiflow/tests/ucsb_152_tap_fir/build/ucsb_152_tap_fir.log 2>&1
+
+clean:
+	rm -rf ${BUILDDIR}
+
